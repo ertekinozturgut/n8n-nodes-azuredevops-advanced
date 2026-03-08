@@ -1,0 +1,1 @@
+{"version":3,"file":"filesystem.error.js","sourceRoot":"","sources":["../../../src/errors/abstract/filesystem.error.ts"],"names":[],"mappings":";;;AAAA,wCAA+C;AAE/C,MAAsB,eAAgB,SAAQ,yBAAgB;IAC7D,YAAY,OAAe,EAAE,QAAgB;QAC5C,KAAK,CAAC,OAAO,EAAE,EAAE,KAAK,EAAE,EAAE,QAAQ,EAAE,EAAE,CAAC,CAAC;IACzC,CAAC;CACD;AAJD,0CAIC"}

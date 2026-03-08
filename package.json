@@ -1,0 +1,27 @@
+{
+  "name": "n8n-nodes-azuredevops-advanced",
+  "version": "0.1.0",
+  "description": "Comprehensive Azure DevOps custom node for n8n",
+  "main": "dist/nodes/AzureDevOpsAdvanced/AzureDevOpsAdvanced.node.js",
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/AzureDevOpsAdvancedApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/AzureDevOpsAdvanced/AzureDevOpsAdvanced.node.js"
+    ]
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "n8n-core": "^1.x",
+    "n8n-workflow": "^1.x"
+  },
+  "devDependencies": {
+    "@types/node": "^18.x",
+    "typescript": "^5.x"
+  }
+}

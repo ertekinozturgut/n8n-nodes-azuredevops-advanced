@@ -1,0 +1,5 @@
+import type { CloseFunction, IExecuteData, INodeExecutionData, IRunExecutionData, ITaskDataConnections, IWorkflowExecuteAdditionalData, Workflow, WorkflowExecuteMode, AINodeConnectionType, IDataObject, ISupplyDataFunctions, INodeType, INode } from 'n8n-workflow';
+import type { ExecuteContext, WebhookContext } from '../../node-execution-context';
+import { SupplyDataContext } from '../../node-execution-context/supply-data-context';
+export declare function makeHandleToolInvocation(contextFactory: (runIndex: number) => ISupplyDataFunctions, node: INode, nodeType: INodeType, runExecutionData: IRunExecutionData): (toolArgs: IDataObject) => Promise<string>;
+export declare function getInputConnectionData(this: ExecuteContext | WebhookContext | SupplyDataContext, workflow: Workflow, runExecutionData: IRunExecutionData, parentRunIndex: number, connectionInputData: INodeExecutionData[], parentInputData: ITaskDataConnections, additionalData: IWorkflowExecuteAdditionalData, executeData: IExecuteData, mode: WorkflowExecuteMode, closeFunctions: CloseFunction[], connectionType: AINodeConnectionType, itemIndex: number, abortSignal?: AbortSignal): Promise<unknown>;

@@ -1,0 +1,3 @@
+import { INodeProperties } from 'n8n-workflow';
+export declare const pipelineOperations: INodeProperties[];
+export declare const pipelineFields: INodeProperties[];

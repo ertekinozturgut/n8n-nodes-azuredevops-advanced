@@ -1,0 +1,1 @@
+{"version":3,"file":"disallowed-filepath.error.js","sourceRoot":"","sources":["../../src/errors/disallowed-filepath.error.ts"],"names":[],"mappings":";;;AAAA,kEAA8D;AAE9D,MAAa,uBAAwB,SAAQ,kCAAe;IAC3D,YAAY,QAAgB;QAC3B,KAAK,CAAC,0BAA0B,EAAE,QAAQ,CAAC,CAAC;IAC7C,CAAC;CACD;AAJD,0DAIC"}

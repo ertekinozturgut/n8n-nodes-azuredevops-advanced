@@ -1,0 +1,1 @@
+{"version":3,"file":"is-object-literal.js","sourceRoot":"","sources":["../../src/utils/is-object-literal.ts"],"names":[],"mappings":";;AASA,0CAOC;AAPD,SAAgB,eAAe,CAAC,SAAkB;IACjD,OAAO,CACN,OAAO,SAAS,KAAK,QAAQ;QAC7B,SAAS,KAAK,IAAI;QAClB,CAAC,KAAK,CAAC,OAAO,CAAC,SAAS,CAAC;QACxB,MAAM,CAAC,cAAc,CAAC,SAAS,CAAY,EAAE,WAAW,EAAE,IAAI,KAAK,QAAQ,CAC5E,CAAC;AACH,CAAC"}

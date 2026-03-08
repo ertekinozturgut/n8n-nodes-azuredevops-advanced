@@ -1,0 +1,10 @@
+import type { BinaryHelperFunctions, IBinaryData, INode, ITaskDataConnections, IWorkflowExecuteAdditionalData } from 'n8n-workflow';
+import type { Readable } from 'stream';
+export declare function binaryToString(body: Buffer | Readable, encoding?: string): Promise<string>;
+export declare function assertBinaryData(inputData: ITaskDataConnections, node: INode, itemIndex: number, parameterData: string | IBinaryData, inputIndex: number): IBinaryData;
+export declare function getBinaryDataBuffer(inputData: ITaskDataConnections, itemIndex: number, parameterData: string | IBinaryData, inputIndex: number): Promise<Buffer>;
+export declare function detectBinaryEncoding(buffer: Buffer): string;
+export declare function setBinaryDataBuffer(binaryData: IBinaryData, bufferOrStream: Buffer | Readable, workflowId: string, executionId: string): Promise<IBinaryData>;
+export declare function copyBinaryFile(workflowId: string, executionId: string, filePath: string, fileName: string, mimeType?: string): Promise<IBinaryData>;
+export declare function prepareBinaryData(binaryData: Buffer | Readable, executionId: string, workflowId: string, filePath?: string, mimeType?: string): Promise<IBinaryData>;
+export declare const getBinaryHelperFunctions: ({ executionId, restApiUrl }: IWorkflowExecuteAdditionalData, workflowId: string) => BinaryHelperFunctions;

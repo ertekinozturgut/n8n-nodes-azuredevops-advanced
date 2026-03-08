@@ -1,0 +1,48 @@
+import { z } from 'zod';
+export declare const roleNamespaceSchema: z.ZodEnum<["global", "project", "credential", "workflow"]>;
+export declare const globalRoleSchema: z.ZodEnum<["global:owner", "global:admin", "global:member"]>;
+export declare const assignableGlobalRoleSchema: z.ZodUnion<[z.ZodEnum<["global:admin", "global:member"]>, z.ZodEffects<z.ZodString, string, string>]>;
+export declare const personalRoleSchema: z.ZodEnum<["project:personalOwner"]>;
+export declare const teamRoleSchema: z.ZodEnum<["project:admin", "project:editor", "project:viewer"]>;
+export declare const customProjectRoleSchema: z.ZodEffects<z.ZodString, string, string>;
+export declare const systemProjectRoleSchema: z.ZodUnion<[z.ZodEnum<["project:personalOwner"]>, z.ZodEnum<["project:admin", "project:editor", "project:viewer"]>]>;
+export declare const assignableProjectRoleSchema: z.ZodUnion<[z.ZodEnum<["project:admin", "project:editor", "project:viewer"]>, z.ZodEffects<z.ZodString, string, string>]>;
+export declare const projectRoleSchema: z.ZodUnion<[z.ZodUnion<[z.ZodEnum<["project:personalOwner"]>, z.ZodEnum<["project:admin", "project:editor", "project:viewer"]>]>, z.ZodEffects<z.ZodString, string, string>]>;
+export declare const credentialSharingRoleSchema: z.ZodEnum<["credential:owner", "credential:user"]>;
+export declare const workflowSharingRoleSchema: z.ZodEnum<["workflow:owner", "workflow:editor"]>;
+export declare const scopeSchema: z.ZodEffects<z.ZodString, string, string>;
+export declare const roleSchema: z.ZodObject<{
+    slug: z.ZodString;
+    displayName: z.ZodString;
+    description: z.ZodNullable<z.ZodString>;
+    systemRole: z.ZodBoolean;
+    roleType: z.ZodEnum<["global", "project", "credential", "workflow"]>;
+    licensed: z.ZodBoolean;
+    scopes: z.ZodArray<z.ZodEffects<z.ZodString, string, string>, "many">;
+    createdAt: z.ZodOptional<z.ZodDate>;
+    updatedAt: z.ZodOptional<z.ZodDate>;
+    usedByUsers: z.ZodOptional<z.ZodNumber>;
+}, "strip", z.ZodTypeAny, {
+    displayName: string;
+    description: string | null;
+    slug: string;
+    systemRole: boolean;
+    roleType: "credential" | "project" | "workflow" | "global";
+    licensed: boolean;
+    scopes: string[];
+    createdAt?: Date | undefined;
+    updatedAt?: Date | undefined;
+    usedByUsers?: number | undefined;
+}, {
+    displayName: string;
+    description: string | null;
+    slug: string;
+    systemRole: boolean;
+    roleType: "credential" | "project" | "workflow" | "global";
+    licensed: boolean;
+    scopes: string[];
+    createdAt?: Date | undefined;
+    updatedAt?: Date | undefined;
+    usedByUsers?: number | undefined;
+}>;
+export type Role = z.infer<typeof roleSchema>;

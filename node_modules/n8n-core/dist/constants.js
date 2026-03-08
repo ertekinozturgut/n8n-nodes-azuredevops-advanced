@@ -1,0 +1,23 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WAITING_TOKEN_QUERY_PARAM = exports.CREDENTIAL_ERRORS = exports.UM_EMAIL_TEMPLATES_PWRESET = exports.UM_EMAIL_TEMPLATES_INVITE = exports.BINARY_DATA_STORAGE_PATH = exports.CONFIG_FILES = exports.BLOCK_FILE_ACCESS_TO_N8N_FILES = exports.RESTRICT_FILE_ACCESS_TO = exports.HTTP_REQUEST_TOOL_NODE_TYPE = exports.HTTP_REQUEST_AS_TOOL_NODE_TYPE = exports.HTTP_REQUEST_NODE_TYPE = exports.PLACEHOLDER_EMPTY_WORKFLOW_ID = exports.PLACEHOLDER_EMPTY_EXECUTION_ID = exports.CUSTOM_EXTENSION_ENV = void 0;
+exports.CUSTOM_EXTENSION_ENV = 'N8N_CUSTOM_EXTENSIONS';
+exports.PLACEHOLDER_EMPTY_EXECUTION_ID = '__UNKNOWN__';
+exports.PLACEHOLDER_EMPTY_WORKFLOW_ID = '__EMPTY__';
+exports.HTTP_REQUEST_NODE_TYPE = 'n8n-nodes-base.httpRequest';
+exports.HTTP_REQUEST_AS_TOOL_NODE_TYPE = 'n8n-nodes-base.httpRequestTool';
+exports.HTTP_REQUEST_TOOL_NODE_TYPE = '@n8n/n8n-nodes-langchain.toolHttpRequest';
+exports.RESTRICT_FILE_ACCESS_TO = 'N8N_RESTRICT_FILE_ACCESS_TO';
+exports.BLOCK_FILE_ACCESS_TO_N8N_FILES = 'N8N_BLOCK_FILE_ACCESS_TO_N8N_FILES';
+exports.CONFIG_FILES = 'N8N_CONFIG_FILES';
+exports.BINARY_DATA_STORAGE_PATH = 'N8N_BINARY_DATA_STORAGE_PATH';
+exports.UM_EMAIL_TEMPLATES_INVITE = 'N8N_UM_EMAIL_TEMPLATES_INVITE';
+exports.UM_EMAIL_TEMPLATES_PWRESET = 'N8N_UM_EMAIL_TEMPLATES_PWRESET';
+exports.CREDENTIAL_ERRORS = {
+    NO_DATA: 'No data is set on this credentials.',
+    DECRYPTION_FAILED: 'Credentials could not be decrypted. The likely reason is that a different "encryptionKey" was used to encrypt the data.',
+    INVALID_JSON: 'Decrypted credentials data is not valid JSON.',
+    INVALID_DATA: 'Credentials data is not in a valid format.',
+};
+exports.WAITING_TOKEN_QUERY_PARAM = 'signature';
+//# sourceMappingURL=constants.js.map

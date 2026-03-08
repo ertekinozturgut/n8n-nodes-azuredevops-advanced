@@ -1,0 +1,99 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Credentials = exports.CredentialDataError = void 0;
+const backend_common_1 = require("@n8n/backend-common");
+const di_1 = require("@n8n/di");
+const n8n_workflow_1 = require("n8n-workflow");
+const a = __importStar(require("node:assert"));
+const constants_1 = require("./constants");
+const cipher_1 = require("./encryption/cipher");
+class CredentialDataError extends n8n_workflow_1.ApplicationError {
+    constructor({ name, type, id }, message, cause) {
+        super(message, {
+            extra: { name, type, id },
+            cause,
+        });
+    }
+}
+exports.CredentialDataError = CredentialDataError;
+class Credentials extends n8n_workflow_1.ICredentials {
+    constructor() {
+        super(...arguments);
+        this.cipher = di_1.Container.get(cipher_1.Cipher);
+    }
+    setData(data) {
+        a.ok((0, backend_common_1.isObjectLiteral)(data));
+        this.data = this.cipher.encrypt(data);
+    }
+    updateData(toUpdate, toDelete = []) {
+        const updatedData = { ...this.getData(), ...toUpdate };
+        for (const key of toDelete) {
+            delete updatedData[key];
+        }
+        this.setData(updatedData);
+    }
+    getData() {
+        if (this.data === undefined) {
+            throw new CredentialDataError(this, constants_1.CREDENTIAL_ERRORS.NO_DATA);
+        }
+        let decryptedData;
+        try {
+            decryptedData = this.cipher.decrypt(this.data);
+        }
+        catch (cause) {
+            throw new CredentialDataError(this, constants_1.CREDENTIAL_ERRORS.DECRYPTION_FAILED, cause);
+        }
+        try {
+            return (0, n8n_workflow_1.jsonParse)(decryptedData);
+        }
+        catch (cause) {
+            throw new CredentialDataError(this, constants_1.CREDENTIAL_ERRORS.INVALID_JSON, cause);
+        }
+    }
+    getDataToSave() {
+        if (this.data === undefined) {
+            throw new n8n_workflow_1.ApplicationError('No credentials were set to save.');
+        }
+        return {
+            id: this.id,
+            name: this.name,
+            type: this.type,
+            data: this.data,
+        };
+    }
+}
+exports.Credentials = Credentials;
+//# sourceMappingURL=credentials.js.map

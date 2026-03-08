@@ -1,0 +1,3 @@
+import { INodeProperties } from 'n8n-workflow';
+export declare const boardOperations: INodeProperties[];
+export declare const boardFields: INodeProperties[];
