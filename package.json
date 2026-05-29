@@ -3,6 +3,30 @@
   "version": "0.1.0",
   "description": "Comprehensive Azure DevOps custom node for n8n",
   "main": "dist/nodes/AzureDevOpsAdvanced/AzureDevOpsAdvanced.node.js",
+  "license": "MIT",
+  "author": {
+    "name": "Ertekin Özturgut",
+    "email": "ertekin456@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ertekinozturgut/n8n-nodes-azuredevops-advanced"
+  },
+  "homepage": "https://github.com/ertekinozturgut/n8n-nodes-azuredevops-advanced",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "azure",
+    "azure-devops",
+    "devops",
+    "automation",
+    "workflow"
+  ],
+  "files": [
+    "dist",
+    "credentials",
+    "nodes"
+  ],
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
@@ -23,5 +47,8 @@
   "devDependencies": {
     "@types/node": "^18.x",
     "typescript": "^5.x"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
