@@ -5,16 +5,16 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![n8n community node](https://img.shields.io/badge/n8n-community%20node-orange)](https://docs.n8n.io/integrations/community-nodes/)
 
-Azure DevOps için kapsamlı bir n8n community node paketi. Git, Pipeline, Work Items, Pull Requests, Test Plans, Boards, Wiki, Service Hooks, TFVC ve Artifacts kaynaklarını tek bir node üzerinden yönetmenizi sağlar.
+A comprehensive n8n community node package for Azure DevOps integration. Manage Git, Pipelines, Work Items, Pull Requests, Test Plans, Boards, Wiki, Service Hooks, TFVC, and Artifacts — all from a single node.
 
 ---
 
-## İçindekiler
+## Table of Contents
 
-- [Özellikler](#özellikler)
-- [Kurulum](#kurulum)
-- [Kimlik Bilgileri Yapılandırması](#kimlik-bilgileri-yapılandırması)
-- [Kaynaklar ve Operasyonlar](#kaynaklar-ve-operasyonlar)
+- [Features](#features)
+- [Installation](#installation)
+- [Credential Configuration](#credential-configuration)
+- [Resources & Operations](#resources--operations)
   - [Git Repositories](#1-git-repositories)
   - [Pipeline (CI/CD)](#2-pipeline-cicd)
   - [Work Items](#3-work-items)
@@ -25,57 +25,57 @@ Azure DevOps için kapsamlı bir n8n community node paketi. Git, Pipeline, Work 
   - [Service Hooks](#8-service-hooks)
   - [TFVC](#9-tfvc)
   - [Artifacts](#10-artifacts)
-- [Kullanım Örnekleri](#kullanım-örnekleri)
-- [Gereksinimler](#gereksinimler)
-- [Katkıda Bulunma](#katkıda-bulunma)
-- [Lisans](#lisans)
+- [Usage Examples](#usage-examples)
+- [Requirements](#requirements)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-## Özellikler
+## Features
 
-- **10 farklı Azure DevOps kaynağı** tek node üzerinden
-- **40+ operasyon** ile kapsamlı otomasyon
-- Azure DevOps REST API **v7.1** desteği
-- Personal Access Token (PAT) ile güvenli kimlik doğrulama
-- n8n'nin hata yönetimi ve **continueOnFail** desteği
-- TypeScript ile geliştirilmiş, tam tip güvenliği
+- **10 Azure DevOps resources** managed through a single node
+- **40+ operations** for comprehensive automation
+- Azure DevOps REST API **v7.1** support
+- Secure authentication via Personal Access Token (PAT)
+- Full support for n8n error handling and **continueOnFail**
+- Built with TypeScript for complete type safety
 
-### Desteklenen Kaynaklar
+### Supported Resources
 
-| Kaynak | Operasyon Sayısı | Açıklama |
-|--------|-----------------|----------|
-| Git Repositories | 4 | Repo listeleme, dosya okuma, branch oluşturma, commit push |
-| Pipeline (CI/CD) | 4 | Pipeline listeleme, çalıştırma, log alma, iptal etme |
-| Work Items | 6 | İş öğesi oluşturma, güncelleme, listeleme, kullanıcı ve etiket yönetimi |
-| Pull Requests | 5 | PR oluşturma, güncelleme, listeleme, yorum okuma |
-| Test Plans | 4 | Test planı, suite, case ve run listeleme |
-| Boards | 3 | Board, kolon ve iterasyon (sprint) listeleme |
-| Wiki | 4 | Wiki sayfası okuma, oluşturma, güncelleme |
-| Service Hooks | 2 | Webhook abonelik listeleme ve oluşturma |
-| TFVC | 2 | TFVC branch listeleme ve dosya okuma |
-| Artifacts | 2 | Feed ve paket listeleme |
+| Resource | Operations | Description |
+|----------|-----------|-------------|
+| Git Repositories | 4 | List repos, read files, create branches, push commits |
+| Pipeline (CI/CD) | 4 | List, run, get logs, cancel pipelines |
+| Work Items | 6 | Create, update, list work items; manage users and tags |
+| Pull Requests | 5 | Create, update, list PRs, read comments |
+| Test Plans | 4 | List test plans, suites, cases, and runs |
+| Boards | 3 | List boards, columns, and iterations (sprints) |
+| Wiki | 4 | Read, create, and update wiki pages |
+| Service Hooks | 2 | List and create webhook subscriptions |
+| TFVC | 2 | List TFVC branches and read files |
+| Artifacts | 2 | List feeds and packages |
 
 ---
 
-## Kurulum
+## Installation
 
-### n8n Arayüzü Üzerinden (Önerilen)
+### Via n8n UI (Recommended)
 
-1. n8n'de **Settings → Community Nodes** sayfasına gidin
-2. **Install** butonuna tıklayın
-3. Paket adını girin: `n8n-nodes-azuredevops-advanced`
-4. **Install** butonuna tıklayın ve yeniden başlatmayı onaylayın
+1. In n8n, go to **Settings → Community Nodes**
+2. Click **Install**
+3. Enter the package name: `n8n-nodes-azuredevops-advanced`
+4. Click **Install** and confirm the restart
 
-### npm ile Manuel Kurulum
+### Manual Installation via npm
 
-Kendi barındırdığınız n8n ortamında:
+For self-hosted n8n environments:
 
 ```bash
 npm install n8n-nodes-azuredevops-advanced
 ```
 
-Docker ile çalışıyorsanız `n8n-custom-extensions` klasörüne ekleyin veya özel bir Docker image oluşturun:
+If you're running Docker, add it to the `n8n-custom-extensions` folder or build a custom Docker image:
 
 ```dockerfile
 FROM n8nio/n8n
@@ -84,19 +84,19 @@ RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-azuredevops-adva
 
 ---
 
-## Kimlik Bilgileri Yapılandırması
+## Credential Configuration
 
-### Azure DevOps Personal Access Token (PAT) Oluşturma
+### Creating an Azure DevOps Personal Access Token (PAT)
 
-1. [dev.azure.com](https://dev.azure.com) adresine gidin ve oturum açın
-2. Sağ üst köşede kullanıcı ikonuna tıklayın → **Personal access tokens**
-3. **New Token** butonuna tıklayın
-4. Token için bir isim verin (örn. `n8n-integration`)
-5. **Expiration** tarihini belirleyin
-6. **Scopes** bölümünde ihtiyaçlarınıza göre izinleri seçin:
+1. Go to [dev.azure.com](https://dev.azure.com) and sign in
+2. Click your user icon in the top right → **Personal access tokens**
+3. Click **New Token**
+4. Give the token a name (e.g. `n8n-integration`)
+5. Set an **Expiration** date
+6. Under **Scopes**, select the permissions you need:
 
-| Kapsam | İzin | Kullanılan Özellik |
-|--------|------|-------------------|
+| Scope | Permission | Used For |
+|-------|-----------|----------|
 | Code | Read & Write | Git, Pull Requests |
 | Build | Read & Execute | Pipeline |
 | Work Items | Read & Write | Work Items, Boards |
@@ -105,41 +105,41 @@ RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-azuredevops-adva
 | Service Hooks | Read, Write & Manage | Service Hooks |
 | Packaging | Read | Artifacts |
 
-7. **Create** butonuna tıklayın ve token'ı kopyalayın (bir daha gösterilmez!)
+7. Click **Create** and copy the token (it won't be shown again!)
 
-### n8n'de Credential Oluşturma
+### Creating a Credential in n8n
 
-1. n8n'de **Credentials → Add Credential** sayfasına gidin
-2. **Azure DevOps Advanced API** seçin
-3. Aşağıdaki bilgileri girin:
+1. In n8n, go to **Credentials → Add Credential**
+2. Select **Azure DevOps Advanced API**
+3. Fill in the following fields:
 
-| Alan | Açıklama | Örnek |
-|------|----------|-------|
-| Organization | Azure DevOps organizasyon adı | `mycompany` |
-| Personal Access Token | Yukarıda oluşturulan PAT | `xxxxxxxxxxxxxxxxxxxx` |
+| Field | Description | Example |
+|-------|-------------|---------|
+| Organization | Your Azure DevOps organization name | `mycompany` |
+| Personal Access Token | The PAT you created above | `xxxxxxxxxxxxxxxxxxxx` |
 
-4. **Save** butonuna tıklayın
+4. Click **Save**
 
-> **Not:** Organization adını `dev.azure.com/{organization}` URL'sinden bulabilirsiniz.
+> **Note:** You can find your organization name in the URL: `dev.azure.com/{organization}`
 
 ---
 
-## Kaynaklar ve Operasyonlar
+## Resources & Operations
 
 ### 1. Git Repositories
 
-Azure DevOps Git depolarını yönetin.
+Manage Azure DevOps Git repositories.
 
-#### Operasyonlar
+#### Operations
 
-| Operasyon | Açıklama | Zorunlu Parametreler |
-|-----------|----------|---------------------|
-| **List Repositories** | Projedeki tüm Git repolarını listele | Project |
-| **Get File Content** | Belirtilen dosyanın içeriğini al | Project, Repository ID, File Path |
-| **Create Branch** | Yeni bir branch oluştur (main'den) | Project, Repository ID, Branch Name |
-| **Push Commit** | Dosya değişikliği commit et | Project, Repository ID, Branch Name, Commit Message |
+| Operation | Description | Required Parameters |
+|-----------|-------------|-------------------|
+| **List Repositories** | List all Git repos in a project | Project |
+| **Get File Content** | Retrieve the content of a file | Project, Repository ID, File Path |
+| **Create Branch** | Create a new branch (from main) | Project, Repository ID, Branch Name |
+| **Push Commit** | Commit a file change | Project, Repository ID, Branch Name, Commit Message |
 
-#### Örnek: Dosya İçeriği Alma
+#### Example: Get File Content
 
 ```
 Resource: Git Repositories
@@ -149,7 +149,7 @@ Repository ID: my-repo
 File Path: /src/app.ts
 ```
 
-#### Örnek: Branch Oluşturma
+#### Example: Create Branch
 
 ```
 Resource: Git Repositories
@@ -163,18 +163,18 @@ Branch Name: refs/heads/feature/new-feature
 
 ### 2. Pipeline (CI/CD)
 
-Azure DevOps build ve release pipeline'larını otomatikleştirin.
+Automate Azure DevOps build and release pipelines.
 
-#### Operasyonlar
+#### Operations
 
-| Operasyon | Açıklama | Zorunlu Parametreler |
-|-----------|----------|---------------------|
-| **List Pipelines** | Tüm pipeline'ları listele | Project |
-| **Run Pipeline** | Pipeline'ı başlat | Project, Pipeline ID |
-| **Get Build Logs** | Belirli bir run'ın loglarını al | Project, Pipeline ID, Run ID |
-| **Cancel Run** | Çalışan pipeline'ı iptal et | Project, Pipeline ID, Run ID |
+| Operation | Description | Required Parameters |
+|-----------|-------------|-------------------|
+| **List Pipelines** | List all pipelines | Project |
+| **Run Pipeline** | Trigger a pipeline | Project, Pipeline ID |
+| **Get Build Logs** | Retrieve logs for a specific run | Project, Pipeline ID, Run ID |
+| **Cancel Run** | Cancel an active pipeline run | Project, Pipeline ID, Run ID |
 
-#### Örnek: Pipeline Tetikleme
+#### Example: Trigger a Pipeline
 
 ```
 Resource: Pipeline
@@ -183,7 +183,7 @@ Project: MyProject
 Pipeline ID: 42
 ```
 
-#### Örnek: Build Loglarını Alma
+#### Example: Get Build Logs
 
 ```
 Resource: Pipeline
@@ -197,20 +197,20 @@ Run ID: 1234
 
 ### 3. Work Items
 
-Azure DevOps iş öğelerini (Task, Bug, Epic, Feature, User Story) yönetin.
+Manage Azure DevOps work items (Task, Bug, Epic, Feature, User Story).
 
-#### Operasyonlar
+#### Operations
 
-| Operasyon | Açıklama | Zorunlu Parametreler |
-|-----------|----------|---------------------|
-| **Get Work Item** | Tek bir iş öğesini getir | Project, Work Item ID |
-| **List All Work Items** | WIQL sorgusuyla tüm iş öğelerini listele | Project |
-| **Create Work Item** | Yeni iş öğesi oluştur | Project, Work Item Type, Title |
-| **Update Work Item** | Mevcut iş öğesini güncelle | Project, Work Item ID |
-| **List Users** | Organizasyon kullanıcılarını listele | - |
-| **List Tags** | Projedeki tüm etiketleri listele | Project |
+| Operation | Description | Required Parameters |
+|-----------|-------------|-------------------|
+| **Get Work Item** | Fetch a single work item | Project, Work Item ID |
+| **List All Work Items** | List all work items via WIQL query | Project |
+| **Create Work Item** | Create a new work item | Project, Work Item Type, Title |
+| **Update Work Item** | Update an existing work item | Project, Work Item ID |
+| **List Users** | List organization users | — |
+| **List Tags** | List all tags in a project | Project |
 
-#### Desteklenen İş Öğesi Türleri
+#### Supported Work Item Types
 
 - Task
 - Bug
@@ -220,7 +220,7 @@ Azure DevOps iş öğelerini (Task, Bug, Epic, Feature, User Story) yönetin.
 - Issue
 - Test Case
 
-#### Desteklenen İş Öğesi Durumları
+#### Supported Work Item States
 
 - New / To Do
 - Active / Doing
@@ -228,20 +228,20 @@ Azure DevOps iş öğelerini (Task, Bug, Epic, Feature, User Story) yönetin.
 - Closed / Done
 - Removed
 
-#### Ek Alanlar (Opsiyonel)
+#### Additional Fields (Optional)
 
-Work Item oluştururken veya güncellerken kullanılabilecek ek alanlar:
+Extra fields available when creating or updating a work item:
 
-| Alan Adı | Açıklama |
-|----------|----------|
-| `System.Description` | İş öğesi açıklaması (HTML destekli) |
-| `System.AssignedTo` | Atanan kullanıcı adı veya e-posta |
-| `System.State` | Durum (New, Active, Resolved, Closed) |
-| `Microsoft.VSTS.Common.Priority` | Öncelik (1=En Yüksek, 4=En Düşük) |
-| `System.Tags` | Etiketler (noktalı virgülle ayrılmış) |
-| `Custom.FieldName` | Özel alanlar |
+| Field Name | Description |
+|-----------|-------------|
+| `System.Description` | Work item description (HTML supported) |
+| `System.AssignedTo` | Assigned user name or email |
+| `System.State` | State (New, Active, Resolved, Closed) |
+| `Microsoft.VSTS.Common.Priority` | Priority (1=Highest, 4=Lowest) |
+| `System.Tags` | Tags (semicolon-separated) |
+| `Custom.FieldName` | Any custom field |
 
-#### Örnek: Bug Oluşturma
+#### Example: Create a Bug
 
 ```
 Resource: Work Items
@@ -259,39 +259,39 @@ Additional Fields:
 
 ### 4. Pull Requests
 
-Git pull request iş akışlarını otomatikleştirin.
+Automate Git pull request workflows.
 
-#### Operasyonlar
+#### Operations
 
-| Operasyon | Açıklama | Zorunlu Parametreler |
-|-----------|----------|---------------------|
-| **Get Pull Request** | Tek PR'ı getir | Project, Repository ID, PR ID |
-| **List Pull Requests** | Filtrelenmiş PR listesi | Project, Repository ID |
-| **Create Pull Request** | Yeni PR oluştur | Project, Repository ID, Source Branch, Target Branch, Title |
-| **Update Pull Request** | PR'ı güncelle veya merge et | Project, Repository ID, PR ID |
-| **Get Comments** | PR yorum thread'lerini getir | Project, Repository ID, PR ID |
+| Operation | Description | Required Parameters |
+|-----------|-------------|-------------------|
+| **Get Pull Request** | Fetch a single PR | Project, Repository ID, PR ID |
+| **List Pull Requests** | List PRs with filters | Project, Repository ID |
+| **Create Pull Request** | Open a new PR | Project, Repository ID, Source Branch, Target Branch, Title |
+| **Update Pull Request** | Update or merge a PR | Project, Repository ID, PR ID |
+| **Get Comments** | Fetch PR review threads | Project, Repository ID, PR ID |
 
-#### PR Listeleme Filtreleri
+#### PR Listing Filters
 
-| Filtre | Seçenekler |
-|--------|-----------|
+| Filter | Options |
+|--------|---------|
 | Status | active, abandoned, completed, all |
-| Source Branch | Kaynak branch adı |
-| Target Branch | Hedef branch adı |
-| Limit | Maksimum sonuç sayısı |
+| Source Branch | Source branch name |
+| Target Branch | Target branch name |
+| Limit | Maximum number of results |
 
-#### Merge Stratejileri
+#### Merge Strategies
 
-PR güncellerken kullanılabilecek merge stratejileri:
+Merge strategies available when completing a PR:
 
-| Strateji | Açıklama |
-|----------|----------|
-| `noFastForward` | Merge commit oluştur |
-| `rebase` | Rebasing ile merge et |
-| `rebaseMerge` | Rebase ve merge commit |
-| `squash` | Tüm commitleri tek commit'e sıkıştır |
+| Strategy | Description |
+|----------|-------------|
+| `noFastForward` | Create a merge commit |
+| `rebase` | Rebase onto target branch |
+| `rebaseMerge` | Rebase and create a merge commit |
+| `squash` | Squash all commits into one |
 
-#### Örnek: PR Oluşturma
+#### Example: Create a Pull Request
 
 ```
 Resource: Pull Requests
@@ -311,18 +311,18 @@ Additional Fields:
 
 ### 5. Test Plans
 
-Azure DevOps test yönetimini otomatikleştirin.
+Automate Azure DevOps test management.
 
-#### Operasyonlar
+#### Operations
 
-| Operasyon | Açıklama | Zorunlu Parametreler |
-|-----------|----------|---------------------|
-| **List Test Plans** | Tüm test planlarını listele | Project |
-| **List Test Suites** | Bir plan içindeki suite'leri listele | Project, Plan ID |
-| **List Test Cases** | Bir suite içindeki test case'leri listele | Project, Plan ID, Suite ID |
-| **List Test Runs** | Tüm test run'larını listele | Project |
+| Operation | Description | Required Parameters |
+|-----------|-------------|-------------------|
+| **List Test Plans** | List all test plans | Project |
+| **List Test Suites** | List suites within a plan | Project, Plan ID |
+| **List Test Cases** | List test cases within a suite | Project, Plan ID, Suite ID |
+| **List Test Runs** | List all test runs | Project |
 
-#### Örnek: Test Case Listeleme
+#### Example: List Test Cases
 
 ```
 Resource: Test Plans
@@ -336,17 +336,17 @@ Suite ID: 25
 
 ### 6. Boards
 
-Agile board ve sprint yönetimi.
+Agile board and sprint management.
 
-#### Operasyonlar
+#### Operations
 
-| Operasyon | Açıklama | Zorunlu Parametreler |
-|-----------|----------|---------------------|
-| **List Boards** | Takım board'larını listele | Project, Team |
-| **List Board Columns** | Board kolonlarını listele | Project, Team, Board ID |
-| **List Iterations** | Sprint/iterasyon listesini al | Project, Team |
+| Operation | Description | Required Parameters |
+|-----------|-------------|-------------------|
+| **List Boards** | List team boards | Project, Team |
+| **List Board Columns** | List columns in a board | Project, Team, Board ID |
+| **List Iterations** | Get sprint/iteration list | Project, Team |
 
-#### Örnek: Sprint Listesi Alma
+#### Example: Get Sprint List
 
 ```
 Resource: Boards
@@ -355,7 +355,7 @@ Project: MyProject
 Team: MyProject Team
 ```
 
-#### Yaygın Board ID'leri
+#### Common Board IDs
 
 - `Epics`
 - `Features`
@@ -366,18 +366,18 @@ Team: MyProject Team
 
 ### 7. Wiki
 
-Azure DevOps wiki sayfalarını yönetin.
+Manage Azure DevOps wiki pages.
 
-#### Operasyonlar
+#### Operations
 
-| Operasyon | Açıklama | Zorunlu Parametreler |
-|-----------|----------|---------------------|
-| **List Wikis** | Projedeki tüm wiki'leri listele | Project |
-| **Get Page** | Wiki sayfasını getir | Project, Wiki Identifier, Page Path |
-| **Create Page** | Yeni wiki sayfası oluştur | Project, Wiki Identifier, Page Path, Content |
-| **Update Page** | Mevcut wiki sayfasını güncelle | Project, Wiki Identifier, Page Path, Content |
+| Operation | Description | Required Parameters |
+|-----------|-------------|-------------------|
+| **List Wikis** | List all wikis in a project | Project |
+| **Get Page** | Fetch a wiki page | Project, Wiki Identifier, Page Path |
+| **Create Page** | Create a new wiki page | Project, Wiki Identifier, Page Path, Content |
+| **Update Page** | Update an existing wiki page | Project, Wiki Identifier, Page Path, Content |
 
-#### Örnek: Wiki Sayfası Oluşturma
+#### Example: Create a Wiki Page
 
 ```
 Resource: Wiki
@@ -385,37 +385,37 @@ Operation: Create Page
 Project: MyProject
 Wiki Identifier: MyProject.wiki
 Page Path: /Documentation/API-Guide
-Content: # API Guide\n\nBu sayfa API rehberini içerir...
+Content: # API Guide\n\nThis page contains the API reference...
 ```
 
-> **Not:** Content alanı Markdown formatını destekler.
+> **Note:** The Content field supports Markdown format.
 
 ---
 
 ### 8. Service Hooks
 
-Azure DevOps event'leri için webhook abonelikleri yönetin.
+Manage webhook subscriptions for Azure DevOps events.
 
-#### Operasyonlar
+#### Operations
 
-| Operasyon | Açıklama | Zorunlu Parametreler |
-|-----------|----------|---------------------|
-| **List Subscriptions** | Tüm webhook aboneliklerini listele | - |
-| **Create Subscription** | Yeni webhook aboneliği oluştur | Project, Event Type, Consumer URL |
+| Operation | Description | Required Parameters |
+|-----------|-------------|-------------------|
+| **List Subscriptions** | List all webhook subscriptions | — |
+| **Create Subscription** | Create a new webhook subscription | Project, Event Type, Consumer URL |
 
-#### Desteklenen Event Türleri
+#### Supported Event Types
 
-| Event Türü | Açıklama |
-|-----------|----------|
-| `build.complete` | Build tamamlandı |
-| `git.push` | Kod push edildi |
-| `git.pullrequest.created` | Pull Request oluşturuldu |
-| `git.pullrequest.merged` | Pull Request merge edildi |
-| `workitem.created` | İş öğesi oluşturuldu |
-| `workitem.updated` | İş öğesi güncellendi |
-| `ms.vss-release.release-created-event` | Release oluşturuldu |
+| Event Type | Description |
+|-----------|-------------|
+| `build.complete` | Build completed |
+| `git.push` | Code pushed |
+| `git.pullrequest.created` | Pull request created |
+| `git.pullrequest.merged` | Pull request merged |
+| `workitem.created` | Work item created |
+| `workitem.updated` | Work item updated |
+| `ms.vss-release.release-created-event` | Release created |
 
-#### Örnek: Webhook Aboneliği Oluşturma
+#### Example: Create a Webhook Subscription
 
 ```
 Resource: Service Hooks
@@ -425,22 +425,22 @@ Event Type: git.push
 Consumer URL: https://your-n8n-instance.com/webhook/xyz
 ```
 
-> **İpucu:** Consumer URL olarak n8n Webhook node'unun URL'sini kullanarak Azure DevOps event'lerini n8n workflow'larına bağlayabilirsiniz.
+> **Tip:** Use your n8n Webhook node's URL as the Consumer URL to connect Azure DevOps events directly to n8n workflows.
 
 ---
 
 ### 9. TFVC
 
-Team Foundation Version Control (eski versiyon kontrol sistemi) desteği.
+Support for Team Foundation Version Control (legacy source control).
 
-#### Operasyonlar
+#### Operations
 
-| Operasyon | Açıklama | Zorunlu Parametreler |
-|-----------|----------|---------------------|
-| **List Branches** | TFVC branch ve klasörlerini listele | Project |
-| **Get File Content** | TFVC'den dosya içeriği al | Project, File Path |
+| Operation | Description | Required Parameters |
+|-----------|-------------|-------------------|
+| **List Branches** | List TFVC branches and folders | Project |
+| **Get File Content** | Read a file from TFVC | Project, File Path |
 
-#### Örnek: TFVC Dosyası Okuma
+#### Example: Read a TFVC File
 
 ```
 Resource: TFVC
@@ -449,22 +449,22 @@ Project: MyProject
 File Path: $/MyProject/src/main.cs
 ```
 
-> **Not:** TFVC yolları `$/` ile başlar.
+> **Note:** TFVC paths start with `$/`.
 
 ---
 
 ### 10. Artifacts
 
-Azure Artifacts paket feed yönetimi.
+Azure Artifacts package feed management.
 
-#### Operasyonlar
+#### Operations
 
-| Operasyon | Açıklama | Zorunlu Parametreler |
-|-----------|----------|---------------------|
-| **List Feeds** | Tüm artifact feed'lerini listele | Project |
-| **List Packages** | Feed içindeki paketleri listele | Project, Feed ID |
+| Operation | Description | Required Parameters |
+|-----------|-------------|-------------------|
+| **List Feeds** | List all artifact feeds | Project |
+| **List Packages** | List packages in a feed | Project, Feed ID |
 
-#### Örnek: Paket Listeleme
+#### Example: List Packages
 
 ```
 Resource: Artifacts
@@ -475,76 +475,76 @@ Feed ID: my-nuget-feed
 
 ---
 
-## Kullanım Örnekleri
+## Usage Examples
 
-### Örnek 1: Otomatik PR Oluşturma Workflow'u
+### Example 1: Automated PR Creation Workflow
 
-Bu workflow, bir GitHub event'inde Azure DevOps'ta otomatik PR oluşturur:
+This workflow automatically creates a PR in Azure DevOps in response to an external event:
 
-1. **Webhook Trigger** → GitHub push event alır
-2. **Azure DevOps Advanced** (Git: Create Branch) → Yeni branch oluşturur
-3. **Azure DevOps Advanced** (Pull Requests: Create) → PR açar
-4. **Slack** → Ekibe bildirim gönderir
+1. **Webhook Trigger** → Receives a GitHub push event
+2. **Azure DevOps Advanced** (Git: Create Branch) → Creates a new branch
+3. **Azure DevOps Advanced** (Pull Requests: Create) → Opens a PR
+4. **Slack** → Sends a notification to the team
 
-### Örnek 2: Work Item Otomasyonu
+### Example 2: Work Item Automation
 
-Jira'dan Azure DevOps'a iş öğesi senkronizasyonu:
+Synchronize issues from Jira to Azure DevOps:
 
-1. **Schedule Trigger** → Her saat çalışır
-2. **Jira** → Yeni issue'ları listeler
-3. **IF** → Azure DevOps'ta mevcut değilse filtreler
-4. **Azure DevOps Advanced** (Work Items: Create) → Task oluşturur
-5. **Jira** → Issue'yu günceller
+1. **Schedule Trigger** → Runs every hour
+2. **Jira** → Lists new issues
+3. **IF** → Filters out items already in Azure DevOps
+4. **Azure DevOps Advanced** (Work Items: Create) → Creates a Task
+5. **Jira** → Updates the original issue
 
-### Örnek 3: Build Monitoring
+### Example 3: Build Monitoring
 
-Pipeline başarısız olduğunda uyarı gönderme:
+Send an alert when a pipeline fails:
 
-1. **Azure DevOps Advanced** (Service Hooks: Create Subscription) → Build event'e abone olur
-2. **Webhook** → Build complete event alır
-3. **IF** → Build başarısız mı kontrol eder
-4. **Azure DevOps Advanced** (Pipeline: Get Build Logs) → Hata loglarını alır
-5. **Email / Slack** → Detaylı hata bildirimi gönderir
+1. **Azure DevOps Advanced** (Service Hooks: Create Subscription) → Subscribes to build events
+2. **Webhook** → Receives the build complete event
+3. **IF** → Checks whether the build failed
+4. **Azure DevOps Advanced** (Pipeline: Get Build Logs) → Fetches error logs
+5. **Email / Slack** → Sends a detailed failure notification
 
 ---
 
-## Gereksinimler
+## Requirements
 
 - **n8n** >= 1.0.0
 - **Node.js** >= 18.x
-- Azure DevOps hesabı ve organizasyon
-- Yeterli izinlere sahip Personal Access Token (PAT)
+- An Azure DevOps account and organization
+- A Personal Access Token (PAT) with sufficient permissions
 
 ---
 
-## Geliştirme
+## Development
 
-Projeyi yerel ortamda çalıştırmak için:
+To run the project locally:
 
 ```bash
-# Repoyu klonlayın
+# Clone the repository
 git clone https://github.com/ertekinozturgut/n8n-nodes-azuredevops-advanced.git
 cd n8n-nodes-azuredevops-advanced
 
-# Bağımlılıkları yükleyin
+# Install dependencies
 npm install
 
-# TypeScript derleme (watch mode)
+# TypeScript compilation (watch mode)
 npm run dev
 
-# Üretim derlemesi
+# Production build
 npm run build
 ```
 
-### Proje Yapısı
+### Project Structure
 
 ```
 n8n-nodes-azuredevops-advanced/
 ├── nodes/
 │   └── AzureDevOpsAdvanced/
-│       ├── AzureDevOpsAdvanced.node.ts    # Ana node implementasyonu
-│       ├── GenericFunctions.ts            # API istek yardımcısı
-│       ├── azureDevOps.svg               # Node ikonu
+│       ├── AzureDevOpsAdvanced.node.ts    # Main node implementation
+│       ├── GenericFunctions.ts            # API request helper
+│       ├── azureDevOps.svg               # Node icon
 │       └── descriptions/
 │           ├── GitDescription.ts
 │           ├── PipelineDescription.ts
@@ -558,38 +558,38 @@ n8n-nodes-azuredevops-advanced/
 │           └── ArtifactsDescription.ts
 ├── credentials/
 │   └── AzureDevOpsAdvancedApi.credentials.ts
-├── dist/                                  # Derlenmiş JavaScript
+├── dist/                                  # Compiled JavaScript
 ├── package.json
 └── tsconfig.json
 ```
 
 ---
 
-## Katkıda Bulunma
+## Contributing
 
-Katkılarınızı bekliyoruz! Lütfen şu adımları takip edin:
+Contributions are welcome! Please follow these steps:
 
-1. Repoyu fork edin
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add amazing feature'`)
-4. Branch'i push edin (`git push origin feature/amazing-feature`)
-5. Pull Request açın
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-### Bug Bildirimi
+### Bug Reports
 
-[GitHub Issues](https://github.com/ertekinozturgut/n8n-nodes-azuredevops-advanced/issues) sayfasından bug bildirebilir veya özellik talebinde bulunabilirsiniz.
-
----
-
-## Lisans
-
-Bu proje [MIT License](LICENSE) altında lisanslanmıştır.
+You can report bugs or request features via [GitHub Issues](https://github.com/ertekinozturgut/n8n-nodes-azuredevops-advanced/issues).
 
 ---
 
-## Bağlantılar
+## License
 
-- [npm Paketi](https://www.npmjs.com/package/n8n-nodes-azuredevops-advanced)
-- [GitHub Reposu](https://github.com/ertekinozturgut/n8n-nodes-azuredevops-advanced)
-- [Azure DevOps REST API Dokümantasyonu](https://docs.microsoft.com/en-us/rest/api/azure/devops/)
-- [n8n Community Nodes Rehberi](https://docs.n8n.io/integrations/community-nodes/)
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## Links
+
+- [npm Package](https://www.npmjs.com/package/n8n-nodes-azuredevops-advanced)
+- [GitHub Repository](https://github.com/ertekinozturgut/n8n-nodes-azuredevops-advanced)
+- [Azure DevOps REST API Documentation](https://docs.microsoft.com/en-us/rest/api/azure/devops/)
+- [n8n Community Nodes Guide](https://docs.n8n.io/integrations/community-nodes/)
