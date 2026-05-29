@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-azuredevops-advanced",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Comprehensive Azure DevOps custom node for n8n",
   "main": "dist/nodes/AzureDevOpsAdvanced/AzureDevOpsAdvanced.node.js",
   "license": "MIT",
