@@ -41,7 +41,7 @@ exports.pipelineFields = [
         displayOptions: {
             show: {
                 resource: ['pipeline'],
-                operation: ['run', 'getLogs'],
+                operation: ['run', 'getLogs', 'cancelRun'],
             },
         },
         default: 0,

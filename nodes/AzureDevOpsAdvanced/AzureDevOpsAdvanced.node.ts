@@ -19,7 +19,7 @@ export class AzureDevOpsAdvanced implements INodeType {
         group: ['transform'],
         version: 1,
         subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-        description: 'Kapsamlı yerel Azure DevOps eklentisi',
+        description: 'Comprehensive Azure DevOps integration node',
         defaults: { name: 'Azure DevOps Advanced' },
         inputs: ['main'],
         outputs: ['main'],
@@ -94,26 +94,49 @@ export class AzureDevOpsAdvanced implements INodeType {
                     else if (operation === 'createBranch') {
                         const repoId = this.getNodeParameter('repositoryId', i) as string;
                         const branchName = this.getNodeParameter('branchName', i) as string;
-                        // To create a branch, we need the oldObjectID from the repo (usually main/master)
-                        // Simplified implementation for the boilerplate. Requires fetching refs first.
-                        const endpoint = `${project}/_apis/git/repositories/${repoId}/refs?filter=heads/main&api-version=7.1`;
-                        const refResponse = await azureApiRequest.call(this, 'GET', endpoint);
-                        const oldObjectId = refResponse?.value?.[0]?.objectId || "0000000000000000000000000000000000000000";
+
+                        // Try main first, fall back to master
+                        let oldObjectId = '0000000000000000000000000000000000000000';
+                        for (const baseBranch of ['main', 'master']) {
+                            const refResponse = await azureApiRequest.call(this, 'GET', `${project}/_apis/git/repositories/${repoId}/refs?filter=heads/${baseBranch}&api-version=7.1`);
+                            if (refResponse?.value?.[0]?.objectId) {
+                                oldObjectId = refResponse.value[0].objectId;
+                                break;
+                            }
+                        }
 
                         const createEndpoint = `${project}/_apis/git/repositories/${repoId}/refs?api-version=7.1`;
-                        const body = [{ name: branchName, newObjectId: oldObjectId, oldObjectId: "0000000000000000000000000000000000000000" }];
+                        const body = [{ name: branchName, newObjectId: oldObjectId, oldObjectId: '0000000000000000000000000000000000000000' }];
                         responseData = await azureApiRequest.call(this, 'POST', createEndpoint, body);
+                        responseData = responseData?.value || responseData;
                     }
                     else if (operation === 'pushCommit') {
                         const repoId = this.getNodeParameter('repositoryId', i) as string;
                         const branchName = this.getNodeParameter('branchName', i) as string;
                         const commitMessage = this.getNodeParameter('commitMessage', i) as string;
-                        // Requires complex PUSH structure with base64 encoded strings for files.
-                        // Simplified placeholder structure
+                        const pushFilePath = this.getNodeParameter('pushFilePath', i) as string;
+                        const fileContent = this.getNodeParameter('fileContent', i) as string;
+                        const changeType = this.getNodeParameter('changeType', i) as string;
+
+                        // Get current branch HEAD to use as oldObjectId
+                        const branchFilter = branchName.replace('refs/heads/', '');
+                        const refResponse = await azureApiRequest.call(this, 'GET', `${project}/_apis/git/repositories/${repoId}/refs?filter=heads/${branchFilter}&api-version=7.1`);
+                        const oldObjectId = refResponse?.value?.[0]?.objectId || '0000000000000000000000000000000000000000';
+
                         const endpoint = `${project}/_apis/git/repositories/${repoId}/pushes?api-version=7.1`;
                         const body = {
-                            refUpdates: [{ name: branchName, oldObjectId: "0000000000000000000000000000000000000000" }],
-                            commits: [{ comment: commitMessage, changes: [] }]
+                            refUpdates: [{ name: branchName, oldObjectId }],
+                            commits: [{
+                                comment: commitMessage,
+                                changes: [{
+                                    changeType,
+                                    item: { path: pushFilePath.startsWith('/') ? pushFilePath : `/${pushFilePath}` },
+                                    newContent: {
+                                        content: Buffer.from(fileContent).toString('base64'),
+                                        contentType: 'base64Encoded',
+                                    },
+                                }],
+                            }],
                         };
                         responseData = await azureApiRequest.call(this, 'POST', endpoint, body);
                     }
@@ -203,8 +226,8 @@ export class AzureDevOpsAdvanced implements INodeType {
                             mapPropertyToPatch('System.Title', this.getNodeParameter('title', i));
                         }
 
-                        const additionalFields = this.getNodeParameter('additionalFields', i) as any;
-                        if (Object.keys(additionalFields).length) {
+                        const additionalFields = this.getNodeParameter('additionalFields', i, {}) as any;
+                        if (additionalFields && Object.keys(additionalFields).length) {
                             mapPropertyToPatch('System.Description', additionalFields.description);
                             mapPropertyToPatch('System.AssignedTo', additionalFields.assignedTo);
                             mapPropertyToPatch('System.State', additionalFields.state);
@@ -270,7 +293,7 @@ export class AzureDevOpsAdvanced implements INodeType {
                     }
                     else if (operation === 'getComments') {
                         const pullRequestId = this.getNodeParameter('pullRequestId', i) as number;
-                        const endpoint = `${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}/threads?api-version=7.1`;
+                        const endpoint = `${project}/_apis/git/repositories/${repositoryId}/pullrequests/${pullRequestId}/threads?api-version=7.1`;
                         responseData = await azureApiRequest.call(this, 'GET', endpoint);
                         responseData = responseData?.value || responseData;
                     }
@@ -279,10 +302,8 @@ export class AzureDevOpsAdvanced implements INodeType {
                         let endpoint = `${project}/_apis/git/repositories/${repositoryId}/pullrequests?api-version=7.1`;
 
                         if (listOptions) {
-                            if (listOptions.status && listOptions.status !== 'all') {
+                            if (listOptions.status) {
                                 endpoint += `&searchCriteria.status=${listOptions.status}`;
-                            } else if (listOptions.status === 'all') {
-                                endpoint += `&searchCriteria.status=all`;
                             }
                             if (listOptions.creatorId) endpoint += `&searchCriteria.creatorId=${listOptions.creatorId}`;
                             if (listOptions.reviewerId) endpoint += `&searchCriteria.reviewerId=${listOptions.reviewerId}`;

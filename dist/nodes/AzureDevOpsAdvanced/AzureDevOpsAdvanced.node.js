@@ -21,7 +21,7 @@ class AzureDevOpsAdvanced {
             group: ['transform'],
             version: 1,
             subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-            description: 'Kapsamlı yerel Azure DevOps eklentisi',
+            description: 'Comprehensive Azure DevOps integration node',
             defaults: { name: 'Azure DevOps Advanced' },
             inputs: ['main'],
             outputs: ['main'],
@@ -70,7 +70,7 @@ class AzureDevOpsAdvanced {
         };
     }
     async execute() {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e, _f;
         const items = this.getInputData();
         const returnData = [];
         const resource = this.getNodeParameter('resource', 0);
@@ -95,25 +95,45 @@ class AzureDevOpsAdvanced {
                     else if (operation === 'createBranch') {
                         const repoId = this.getNodeParameter('repositoryId', i);
                         const branchName = this.getNodeParameter('branchName', i);
-                        // To create a branch, we need the oldObjectID from the repo (usually main/master)
-                        // Simplified implementation for the boilerplate. Requires fetching refs first.
-                        const endpoint = `${project}/_apis/git/repositories/${repoId}/refs?filter=heads/main&api-version=7.1`;
-                        const refResponse = await GenericFunctions_1.azureApiRequest.call(this, 'GET', endpoint);
-                        const oldObjectId = ((_b = (_a = refResponse === null || refResponse === void 0 ? void 0 : refResponse.value) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.objectId) || "0000000000000000000000000000000000000000";
+                        // Try main first, fall back to master
+                        let oldObjectId = '0000000000000000000000000000000000000000';
+                        for (const baseBranch of ['main', 'master']) {
+                            const refResponse = await GenericFunctions_1.azureApiRequest.call(this, 'GET', `${project}/_apis/git/repositories/${repoId}/refs?filter=heads/${baseBranch}&api-version=7.1`);
+                            if ((_b = (_a = refResponse === null || refResponse === void 0 ? void 0 : refResponse.value) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.objectId) {
+                                oldObjectId = refResponse.value[0].objectId;
+                                break;
+                            }
+                        }
                         const createEndpoint = `${project}/_apis/git/repositories/${repoId}/refs?api-version=7.1`;
-                        const body = [{ name: branchName, newObjectId: oldObjectId, oldObjectId: "0000000000000000000000000000000000000000" }];
+                        const body = [{ name: branchName, newObjectId: oldObjectId, oldObjectId: '0000000000000000000000000000000000000000' }];
                         responseData = await GenericFunctions_1.azureApiRequest.call(this, 'POST', createEndpoint, body);
+                        responseData = (responseData === null || responseData === void 0 ? void 0 : responseData.value) || responseData;
                     }
                     else if (operation === 'pushCommit') {
                         const repoId = this.getNodeParameter('repositoryId', i);
                         const branchName = this.getNodeParameter('branchName', i);
                         const commitMessage = this.getNodeParameter('commitMessage', i);
-                        // Requires complex PUSH structure with base64 encoded strings for files.
-                        // Simplified placeholder structure
+                        const pushFilePath = this.getNodeParameter('pushFilePath', i);
+                        const fileContent = this.getNodeParameter('fileContent', i);
+                        const changeType = this.getNodeParameter('changeType', i);
+                        // Get current branch HEAD to use as oldObjectId
+                        const branchFilter = branchName.replace('refs/heads/', '');
+                        const refResponse = await GenericFunctions_1.azureApiRequest.call(this, 'GET', `${project}/_apis/git/repositories/${repoId}/refs?filter=heads/${branchFilter}&api-version=7.1`);
+                        const oldObjectId = ((_d = (_c = refResponse === null || refResponse === void 0 ? void 0 : refResponse.value) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.objectId) || '0000000000000000000000000000000000000000';
                         const endpoint = `${project}/_apis/git/repositories/${repoId}/pushes?api-version=7.1`;
                         const body = {
-                            refUpdates: [{ name: branchName, oldObjectId: "0000000000000000000000000000000000000000" }],
-                            commits: [{ comment: commitMessage, changes: [] }]
+                            refUpdates: [{ name: branchName, oldObjectId }],
+                            commits: [{
+                                    comment: commitMessage,
+                                    changes: [{
+                                            changeType,
+                                            item: { path: pushFilePath.startsWith('/') ? pushFilePath : `/${pushFilePath}` },
+                                            newContent: {
+                                                content: Buffer.from(fileContent).toString('base64'),
+                                                contentType: 'base64Encoded',
+                                            },
+                                        }],
+                                }],
                         };
                         responseData = await GenericFunctions_1.azureApiRequest.call(this, 'POST', endpoint, body);
                     }
@@ -169,7 +189,7 @@ class AzureDevOpsAdvanced {
                         const endpoint = `${project}/_apis/wit/wiql?api-version=7.1`;
                         const wiqlQuery = { query: `Select [System.Id], [System.Title], [System.State] From WorkItems Where [System.TeamProject] = '${project}'` };
                         const idsResponse = await GenericFunctions_1.azureApiRequest.call(this, 'POST', endpoint, wiqlQuery);
-                        const idsArray = (_c = idsResponse === null || idsResponse === void 0 ? void 0 : idsResponse.workItems) === null || _c === void 0 ? void 0 : _c.map((wi) => wi.id);
+                        const idsArray = (_e = idsResponse === null || idsResponse === void 0 ? void 0 : idsResponse.workItems) === null || _e === void 0 ? void 0 : _e.map((wi) => wi.id);
                         if (idsArray && idsArray.length > 0) {
                             const workItemIds = idsArray.join(',');
                             const bulkEndpoint = `${project}/_apis/wit/workitems?ids=${workItemIds}&api-version=7.1`;
@@ -195,14 +215,14 @@ class AzureDevOpsAdvanced {
                         if (!isUpdate) {
                             mapPropertyToPatch('System.Title', this.getNodeParameter('title', i));
                         }
-                        const additionalFields = this.getNodeParameter('additionalFields', i);
-                        if (Object.keys(additionalFields).length) {
+                        const additionalFields = this.getNodeParameter('additionalFields', i, {});
+                        if (additionalFields && Object.keys(additionalFields).length) {
                             mapPropertyToPatch('System.Description', additionalFields.description);
                             mapPropertyToPatch('System.AssignedTo', additionalFields.assignedTo);
                             mapPropertyToPatch('System.State', additionalFields.state);
                             mapPropertyToPatch('Microsoft.VSTS.Common.Priority', additionalFields.priority);
                             mapPropertyToPatch('System.Tags', additionalFields.tags);
-                            if ((_d = additionalFields.customFieldsUi) === null || _d === void 0 ? void 0 : _d.customFieldsValues) {
+                            if ((_f = additionalFields.customFieldsUi) === null || _f === void 0 ? void 0 : _f.customFieldsValues) {
                                 for (const customField of additionalFields.customFieldsUi.customFieldsValues) {
                                     mapPropertyToPatch(customField.fieldId, customField.fieldValue);
                                 }
@@ -256,7 +276,7 @@ class AzureDevOpsAdvanced {
                     }
                     else if (operation === 'getComments') {
                         const pullRequestId = this.getNodeParameter('pullRequestId', i);
-                        const endpoint = `${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}/threads?api-version=7.1`;
+                        const endpoint = `${project}/_apis/git/repositories/${repositoryId}/pullrequests/${pullRequestId}/threads?api-version=7.1`;
                         responseData = await GenericFunctions_1.azureApiRequest.call(this, 'GET', endpoint);
                         responseData = (responseData === null || responseData === void 0 ? void 0 : responseData.value) || responseData;
                     }
@@ -264,11 +284,8 @@ class AzureDevOpsAdvanced {
                         const listOptions = this.getNodeParameter('listOptions', i);
                         let endpoint = `${project}/_apis/git/repositories/${repositoryId}/pullrequests?api-version=7.1`;
                         if (listOptions) {
-                            if (listOptions.status && listOptions.status !== 'all') {
+                            if (listOptions.status) {
                                 endpoint += `&searchCriteria.status=${listOptions.status}`;
-                            }
-                            else if (listOptions.status === 'all') {
-                                endpoint += `&searchCriteria.status=all`;
                             }
                             if (listOptions.creatorId)
                                 endpoint += `&searchCriteria.creatorId=${listOptions.creatorId}`;
