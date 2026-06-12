@@ -25,7 +25,8 @@
   "files": [
     "dist",
     "credentials",
-    "nodes"
+    "nodes",
+    "README.md"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
