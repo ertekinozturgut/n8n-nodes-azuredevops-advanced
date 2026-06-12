@@ -257,7 +257,7 @@ export class AzureDevOpsAdvanced implements INodeType {
                         });
                     }
                     else if (operation === 'listUsers') {
-                        // Azure Graph API / Core API üzerinden user listesi çekilir
+                        // Users are fetched via the Azure Graph API (vssps endpoint)
                         const endpoint = `_apis/graph/users?api-version=7.1-preview.1`;
                         const credentials = await this.getCredentials('azureDevOpsAdvancedApi');
                         const baseUrl = `https://vssps.dev.azure.com/${(credentials as any).organization}`;
@@ -275,7 +275,7 @@ export class AzureDevOpsAdvanced implements INodeType {
                         responseData = responseData?.value || responseData;
                     }
                     else if (operation === 'listTags') {
-                        // Project bazlı tag listesi
+                        // Retrieve all work item tags scoped to the project
                         const endpoint = `${project}/_apis/wit/tags?api-version=7.1-preview.1`;
                         responseData = await azureApiRequest.call(this, 'GET', endpoint);
                         responseData = responseData?.value || responseData;
@@ -540,7 +540,7 @@ export class AzureDevOpsAdvanced implements INodeType {
                     }
                 }
 
-                // Sonuçların işlenmesi
+                // Process and return results
                 if (Array.isArray(responseData)) {
                     returnData.push.apply(returnData, responseData.map(item => ({ json: item })));
                 } else {

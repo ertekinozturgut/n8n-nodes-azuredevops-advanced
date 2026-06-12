@@ -5,7 +5,7 @@ class AzureDevOpsAdvancedApi {
     constructor() {
         this.name = 'azureDevOpsAdvancedApi';
         this.displayName = 'Azure DevOps Advanced API';
-        // Belgelendirme linkine doğrudan PAT nasıl alınır yönlendirilebilir
+        // Documentation link explaining how to obtain a Personal Access Token
         this.documentationUrl = 'https://n8n.io/integrations/azure-devops';
         this.properties = [
             {
@@ -23,7 +23,7 @@ class AzureDevOpsAdvancedApi {
                 typeOptions: { password: true },
                 default: '',
                 required: true,
-                description: 'Tüm repolara Read/Write yetkilendirmesi olan Azure DevOps PAT anahtarınız',
+                description: 'Your Azure DevOps Personal Access Token with Read/Write access to all required resources',
             },
         ];
     }
