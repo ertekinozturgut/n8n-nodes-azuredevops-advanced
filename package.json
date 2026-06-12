@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-azuredevops-advanced",
-  "version": "0.1.2",
+  "version": "0.3.0",
   "description": "Comprehensive Azure DevOps custom node for n8n",
   "main": "dist/nodes/AzureDevOpsAdvanced/AzureDevOpsAdvanced.node.js",
   "license": "MIT",
@@ -38,14 +38,18 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "jest --forceExit"
   },
   "dependencies": {
     "n8n-core": "^1.x",
     "n8n-workflow": "^1.x"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^18.x",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
     "typescript": "^5.x"
   },
   "publishConfig": {

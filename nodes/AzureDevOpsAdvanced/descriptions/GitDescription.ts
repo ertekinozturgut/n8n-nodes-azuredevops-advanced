@@ -92,6 +92,36 @@ export const gitFields: INodeProperties[] = [
         },
     },
     {
+        displayName: 'File Path',
+        name: 'pushFilePath',
+        type: 'string',
+        default: '',
+        required: true,
+        displayOptions: {
+            show: {
+                resource: ['git'],
+                operation: ['pushCommit'],
+            },
+        },
+        description: 'Path of the file to create or update (e.g. /src/app.ts)',
+    },
+    {
+        displayName: 'Change Type',
+        name: 'changeType',
+        type: 'options',
+        options: [
+            { name: 'Edit (update existing file)', value: 'edit' },
+            { name: 'Add (create new file)', value: 'add' },
+        ],
+        default: 'edit',
+        displayOptions: {
+            show: {
+                resource: ['git'],
+                operation: ['pushCommit'],
+            },
+        },
+    },
+    {
         displayName: 'File Content',
         name: 'fileContent',
         type: 'string',

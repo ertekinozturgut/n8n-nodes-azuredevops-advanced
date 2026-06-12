@@ -27,7 +27,7 @@ export async function azureApiRequest(
         json: true,
     };
 
-    if (Object.keys(body).length === 0) {
+    if (!Array.isArray(body) && Object.keys(body).length === 0) {
         delete options.body;
     }
 
