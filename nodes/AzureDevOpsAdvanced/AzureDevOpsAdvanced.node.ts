@@ -88,7 +88,7 @@ export class AzureDevOpsAdvanced implements INodeType {
                     else if (operation === 'getFile') {
                         const repoId = this.getNodeParameter('repositoryId', i) as string;
                         const filePath = this.getNodeParameter('filePath', i) as string;
-                        const endpoint = `${project}/_apis/git/repositories/${repoId}/items?scopePath=${filePath}&api-version=7.1`;
+                        const endpoint = `${project}/_apis/git/repositories/${repoId}/items?path=${filePath}&includeContent=true&api-version=7.1`;
                         responseData = await azureApiRequest.call(this, 'GET', endpoint);
                     }
                     else if (operation === 'createBranch') {
