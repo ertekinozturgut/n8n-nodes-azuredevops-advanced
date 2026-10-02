@@ -52,15 +52,66 @@ describe('Git Resource', () => {
 		expect(result.json.id).toBe('x');
 	});
 
-	test('getFile — calls correct endpoint', async () => {
+	test.each([
+		'/src/app.ts',
+		'/docs/file name.md',
+		'/docs/a&includeContent=false#part?.md',
+		'/docs/100%+done.md',
+		'/docs/özet-日本語.md',
+	])('getFile — requests content for the exact path %s', async (filePath) => {
+		const gitItem = { path: filePath, objectId: 'blob-1', content: 'file content\n' };
 		const ctx = buildMockContext(
-			{ resource: 'git', operation: 'getFile', project: 'MyProject', repositoryId: 'repo-1', filePath: '/src/app.ts' },
-			[{ content: 'file content' }],
+			{ resource: 'git', operation: 'getFile', project: 'MyProject', repositoryId: 'repo-1', filePath },
+		);
+		// Model the documented API contract: the list route returns metadata only;
+		// the single-item route needs includeContent=true to populate content.
+		ctx._mockRequest.mockImplementation(async (options: any) => {
+			const query = new URL(options.uri).searchParams;
+			if (query.get('path') === filePath && query.get('includeContent') === 'true') {
+				return gitItem;
+			}
+			return { count: 1, value: [{ path: filePath, objectId: 'blob-1' }] };
+		});
+
+		const [[result]] = await runNode(ctx);
+		expect(result.json).toEqual(gitItem);
+		expect(ctx._mockRequest).toHaveBeenCalledTimes(1);
+		const request = ctx._mockRequest.mock.calls[0][0];
+		const url = new URL(request.uri);
+		expect(url.origin + url.pathname).toBe('https://dev.azure.com/myorg/MyProject/_apis/git/repositories/repo-1/items');
+		expect(Object.fromEntries(url.searchParams)).toEqual({
+			path: filePath,
+			includeContent: 'true',
+			$format: 'json',
+			'api-version': '7.1',
+		});
+		expect(url.hash).toBe('');
+		expect(request.method).toBe('GET');
+		expect(request.json).toBe(true);
+		expect(request.body).toBeUndefined();
+	});
+
+	test.each(['', '{"hello":"world"}', 'Hello\n世界\n'])('getFile — preserves content %j and metadata', async (content) => {
+		const gitItem = { path: '/README.md', objectId: 'blob-1', content };
+		const ctx = buildMockContext(
+			{ resource: 'git', operation: 'getFile', project: 'MyProject', repositoryId: 'repo-1', filePath: gitItem.path },
+			[gitItem],
 		);
 		const [[result]] = await runNode(ctx);
-		expect(result.json.content).toBe('file content');
-		const uri: string = ctx._mockRequest.mock.calls[0][0].uri;
-		expect(uri).toContain('scopePath=/src/app.ts');
+		expect(result.json).toEqual(gitItem);
+	});
+
+	test('getFile — evaluates the file path for each input item', async () => {
+		const paths = ['/first.txt', '/second & third.txt'];
+		const responses = paths.map((path, i) => ({ path, content: `content ${i}` }));
+		const params: Record<string, string> = { resource: 'git', operation: 'getFile', project: 'MyProject', repositoryId: 'repo-1' };
+		const ctx = buildMockContext(params, responses);
+		ctx.getInputData = () => paths.map(() => ({ json: {} }));
+		ctx.getNodeParameter = (name: string, index: number) => name === 'filePath' ? paths[index] : params[name];
+
+		const [results] = await runNode(ctx);
+		expect(results.map((result) => result.json)).toEqual(responses);
+		expect(ctx._mockRequest.mock.calls.map(([request]: any[]) => new URL(request.uri).searchParams.get('path'))).toEqual(paths);
 	});
 
 	test('createBranch — picks objectId from main', async () => {

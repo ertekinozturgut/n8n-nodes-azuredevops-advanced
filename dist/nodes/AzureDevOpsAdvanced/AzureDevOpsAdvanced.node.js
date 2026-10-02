@@ -89,7 +89,7 @@ class AzureDevOpsAdvanced {
                     else if (operation === 'getFile') {
                         const repoId = this.getNodeParameter('repositoryId', i);
                         const filePath = this.getNodeParameter('filePath', i);
-                        const endpoint = `${project}/_apis/git/repositories/${repoId}/items?scopePath=${filePath}&api-version=7.1`;
+                        const endpoint = `${project}/_apis/git/repositories/${repoId}/items?path=${encodeURIComponent(filePath)}&includeContent=true&$format=json&api-version=7.1`;
                         responseData = await GenericFunctions_1.azureApiRequest.call(this, 'GET', endpoint);
                     }
                     else if (operation === 'createBranch') {
